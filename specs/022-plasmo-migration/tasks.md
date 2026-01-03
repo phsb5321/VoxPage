@@ -93,7 +93,7 @@ current JavaScript implementation on Wikipedia test page with 200 paragraphs.
 
 ### Background Module Conversion (Foundational)
 
-- [ ] T018 [P] Convert background/playback-sync.js → utils/audio/playback-sync.ts (PlaybackSyncState class with playbackStateSchema)
+- [X] T018 [P] Convert background/playback-sync.js → utils/audio/playback-sync.ts (PlaybackSyncState class with playbackStateSchema)
 - [ ] T019 [P] Convert background/audio-cache.js → utils/audio/cache.ts (AudioCache class)
 - [ ] T020 [P] Convert background/audio-visualizer.js → utils/audio/visualizer.ts
 - [ ] T021 [P] Convert background/providers/openai-provider.js → utils/providers/openai.ts (ITTSProvider interface, ttsRequestSchema, ttsResponseSchema)
@@ -102,7 +102,7 @@ current JavaScript implementation on Wikipedia test page with 200 paragraphs.
 - [ ] T024 [P] Convert background/providers/groq-provider.js → utils/providers/groq.ts
 - [ ] T025 [P] Convert background/providers/browser-provider.js → utils/providers/browser.ts
 - [ ] T026 [P] Convert background/providers/groq-timestamp-provider.js → utils/providers/groq-timestamp.ts
-- [ ] T027 Create utils/providers/base.ts with ITTSProvider interface and Zod schemas
+- [X] T027 Create utils/providers/base.ts with ITTSProvider interface and Zod schemas
 - [ ] T028 [P] Convert background/remote-logger.js → utils/logging/logger.ts (RemoteLogger class with Loki HTTP Push API)
 - [ ] T029 [P] Convert background/log-entry.js → utils/logging/entry.ts (LogEntry model with nanosecond timestamps)
 - [ ] T030 [P] Convert background/log-buffer.js → utils/logging/buffer.ts (LogBuffer circular buffer)

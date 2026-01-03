@@ -11,6 +11,8 @@ node_modules/
 coverage/
 dist/
 build/
+.wxt/
+.output/
 
 # Test files (handled by separate config if needed)
 tests/

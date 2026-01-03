@@ -1,0 +1,342 @@
+# WXT Framework Migration Status
+
+**Feature**: 022-plasmo-migration
+**Branch**: `022-plasmo-migration`
+**Last Updated**: 2026-01-03
+**Overall Progress**: 7 of 161 tasks complete (4.3%)
+
+## Executive Summary
+
+The VoxPage browser extension is being migrated from vanilla JavaScript + JSDoc to TypeScript + WXT framework. This is a **5-6 week project** with 161 tasks across 8 phases. The foundation is established with WXT configured, TypeScript working, and core modules converted.
+
+**Status**: Phase 1 complete ✅ | Phase 2 in progress 🔄 (15% done)
+
+---
+
+## Commits Pushed (3 total)
+
+### Commit 1: `5914c86` - Phase 1 Foundation
+**Date**: 2026-01-03
+**Tasks**: T001-T012 (12 tasks)
+
+```
+feat(foundation): initialize WXT project structure
+
+- Install WXT, TypeScript 5.x, @webext-core/messaging, franc-min
+- Create tsconfig.json with strict mode enabled
+- Create wxt.config.ts with Manifest V3 configuration
+- Update package.json with WXT dev/build/zip scripts
+- Create entrypoints/ directory with minimal background.ts and content.ts
+- Update .gitignore and .eslintignore for WXT outputs
+- Validate extension builds successfully (18.04 kB bundle)
+```
+
+**Gate Passed**: ✅ Extension builds without errors
+
+### Commit 2: `1102cc0` - Config Modules
+**Date**: 2026-01-03
+**Tasks**: T013-T017 (5 tasks)
+
+```
+feat(typescript): convert config modules to TypeScript with Zod
+
+Created:
+- utils/config/schema.ts - Zod schemas (settingsSchema, footerStateSchema, detectedLanguageSchema)
+- utils/config/defaults.ts - Typed frozen defaults
+- utils/config/store.ts - SettingsStore class with full type safety
+- utils/config/migrations.ts - Version-based migration logic
+- utils/config/index.ts - Centralized exports
+```
+
+**Key Achievement**: Zod-first type architecture established
+
+### Commit 3: `1ded842` - Core Audio Modules
+**Date**: 2026-01-03
+**Tasks**: T018, T027 (2 tasks)
+
+```
+feat(typescript): convert playback-sync and provider base
+
+Created:
+- utils/audio/playback-sync.ts - PlaybackSyncState class with Zod schemas
+- utils/providers/base.ts - ITTSProvider interface + abstract base class
+```
+
+**Key Achievement**: Core playback engine converted with type safety
+
+---
+
+## Phase 2: TypeScript Conversion Status
+
+**Goal**: Convert entire JavaScript + JSDoc codebase to TypeScript with Zod-first types
+**Gate**: `tsc --noEmit` passes + all 153 tests pass
+**Progress**: 7 of 46 tasks (15%)
+
+### ✅ Completed (7 tasks)
+
+- [X] T013 - Config schema.ts
+- [X] T014 - Config defaults.ts
+- [X] T015 - Config store.ts
+- [X] T016 - Config migrations.ts
+- [X] T017 - Config index.ts
+- [X] T018 - Audio playback-sync.ts
+- [X] T027 - Provider base.ts
+
+### 📋 Next Batch: Audio Modules (2 tasks)
+
+**Resume Point**: T019
+
+- [ ] T019 - Convert audio-cache.js → utils/audio/cache.ts
+- [ ] T020 - Convert audio-visualizer.js → utils/audio/visualizer.ts
+
+**Estimated Time**: 30 minutes
+**Commit After**: Batch 1 complete
+
+### 📋 Batch 2: TTS Providers (6 tasks)
+
+- [ ] T021 - openai-provider.js → utils/providers/openai.ts
+- [ ] T022 - elevenlabs-provider.js → utils/providers/elevenlabs.ts
+- [ ] T023 - cartesia-provider.js → utils/providers/cartesia.ts
+- [ ] T024 - groq-provider.js → utils/providers/groq.ts
+- [ ] T025 - browser-provider.js → utils/providers/browser.ts
+- [ ] T026 - groq-timestamp-provider.js → utils/providers/groq-timestamp.ts
+
+**Estimated Time**: 2 hours
+**Commit After**: Batch 2 complete
+
+### 📋 Batch 3: Logging Modules (3 tasks)
+
+- [ ] T028 - remote-logger.js → utils/logging/logger.ts
+- [ ] T029 - log-entry.js → utils/logging/entry.ts
+- [ ] T030 - log-buffer.js → utils/logging/buffer.ts
+
+**Estimated Time**: 45 minutes
+**Commit After**: Batch 3 complete
+
+### 📋 Batch 4: Content Modules (5 tasks)
+
+- [ ] T031 - content-extractor.js → utils/content/extractor.ts
+- [ ] T032 - content-scorer.js → utils/content/scorer.ts
+- [ ] T033 - highlight-manager.js → utils/content/highlight.ts
+- [ ] T034 - sticky-footer.js → utils/content/sticky-footer.ts
+- [ ] T035 - text-segment.js → utils/content/text-segment.ts
+
+**Estimated Time**: 1.5 hours
+**Commit After**: Batch 4 complete
+
+### 📋 Batch 5: Language Detection (5 tasks)
+
+- [ ] T036 - Remove CLD3 dependency
+- [ ] T037 - language-detector.js → utils/language/detector.ts (with franc-min)
+- [ ] T038 - language-mappings.js → utils/language/mappings.ts
+- [ ] T039 - language-extractor.js → utils/language/extractor.ts
+- [ ] T040 - Create utils/language/types.ts
+
+**Estimated Time**: 1.5 hours
+**Key Change**: Replace CLD3 WASM with franc-min (pure JavaScript)
+**Commit After**: Batch 5 complete
+
+### 📋 Batch 6: Test Infrastructure (6 tasks)
+
+- [ ] T041 - Update all test imports (@/ path aliases)
+- [ ] T042 - Add TypeScript Jest configuration
+- [ ] T043 - Create mock for @webext-core/messaging
+- [ ] T044 - Run `tsc --noEmit` and fix type errors
+- [ ] T045 - Run `npm test` and verify 153 tests pass
+- [ ] T046 - Commit Phase 2 completion
+
+**Estimated Time**: 2 hours
+**Phase 2 Gate**: `tsc --noEmit` + 153 tests passing
+**Final Commit**: Phase 2 complete
+
+---
+
+## Remaining Phases (3-8)
+
+### Phase 3: US1 - Developer Onboarding (T047-T069)
+**Status**: Not started
+**Tasks**: 23
+**Goal**: Implement @webext-core/messaging with ProtocolMap
+
+**Key Deliverables**:
+- utils/messaging/protocol.ts with VoxPageProtocol interface
+- 9 domain-based handler files (playback, audio, provider, content, highlight, language, settings, footer, logging)
+- entrypoints/background.ts integration
+- Remove old message-router.js (888 LOC)
+
+**Estimated Time**: 1 week
+
+### Phase 4: US2 - Zero Regression Migration (T070-T102)
+**Status**: Not started
+**Tasks**: 33
+**Goal**: Migrate content scripts, popup, options to WXT entrypoints
+
+**Key Deliverables**:
+- entrypoints/content.ts with defineContentScript
+- entrypoints/popup.html + popup/main.ts
+- entrypoints/options.html + options/main.ts
+- All 153 tests passing
+- Performance within ±10%
+
+**Estimated Time**: 1.5 weeks
+
+### Phase 5: US3 - Maintainability (T103-T118)
+**Status**: Not started
+**Tasks**: 16
+**Goal**: Remove deprecated code, verify LOC reduction
+
+**Key Deliverables**:
+- Remove 2,500+ LOC of deprecated code
+- Code duplication ≤1.4%
+- No circular dependencies
+- Update CLAUDE.md with new structure
+
+**Estimated Time**: 1 week
+
+### Phase 6: US4 - Build Performance (T119-T131)
+**Status**: Not started
+**Tasks**: 13
+**Goal**: Optimize Vite bundling
+
+**Key Deliverables**:
+- HMR rebuild <3s
+- Production build <60s
+- Bundle size analysis
+
+**Estimated Time**: 2 days
+
+### Phase 7: US5 - Popup Feature (T132-T141)
+**Status**: Not started
+**Tasks**: 10
+**Goal**: Add missing popup UI
+
+**Estimated Time**: 2 days
+
+### Phase 8: Polish & Final Validation (T142-T157)
+**Status**: Not started
+**Tasks**: 16
+**Goal**: Documentation, final testing, release prep
+
+**Estimated Time**: 3 days
+
+---
+
+## Quick Resume Guide
+
+### To Continue Migration:
+
+1. **Ensure branch is current**:
+   ```bash
+   git checkout 022-plasmo-migration
+   git pull origin 022-plasmo-migration
+   ```
+
+2. **Run `/speckit.implement` and continue from T019**
+
+3. **Batch Workflow**:
+   - Convert files in batch
+   - Update tasks.md to mark [X] completed
+   - Run `npm run build:firefox` to verify
+   - Commit batch with descriptive message
+   - Push to remote
+   - Repeat for next batch
+
+4. **Phase 2 Completion Gate**:
+   ```bash
+   # Must pass before proceeding to Phase 3
+   npx tsc --noEmit        # Zero errors required
+   npm test                # All 153 tests pass
+   ```
+
+### Key Commands:
+
+```bash
+# Development
+npm run dev:firefox      # Start WXT dev server
+npm run build:firefox    # Build production extension
+
+# Testing
+npm test                 # Run all tests
+npm run test:unit        # Jest only
+npm run test:visual      # Playwright visual regression
+
+# Quality
+npm run lint             # ESLint
+npm run quality          # Circular deps + duplication + manifest lint
+
+# TypeScript
+npx tsc --noEmit         # Type checking (no output)
+```
+
+---
+
+## Architecture Decisions
+
+### Zod-First Approach ✅
+All TypeScript types derived from Zod schemas using `z.infer<typeof schema>`:
+- Runtime validation at boundaries
+- Single source of truth for types
+- Default value handling
+
+### Module Organization ✅
+- `entrypoints/` - WXT auto-discovery (background, content, popup, options)
+- `utils/` - Shared code (config, audio, providers, content, language, logging)
+- Path aliases: `@/*` maps to `utils/*`
+
+### Provider Pattern ✅
+- `ITTSProvider` interface for all providers
+- `BaseTTSProvider` abstract class
+- Zod validation for requests/responses
+
+---
+
+## Known Issues / Notes
+
+### CLD3 → franc-min Migration (T036-T040)
+- CLD3 WASM requires complex bundling (vite-plugin-wasm)
+- franc-min is pure JavaScript (282KB, 82 languages)
+- 80-85% accuracy sufficient for voice filtering UX
+- Remove `cld3-asm` from package.json dependencies
+
+### Browser Compatibility
+- Target: Chrome 88+, Firefox 100+, Edge 88+
+- CSS Custom Highlight API required (Firefox 119+)
+- Offscreen Documents API for Chrome audio
+
+### Test Updates Required
+- Import paths: `background/*` → `@/utils/*`
+- Mock `@webext-core/messaging` for tests
+- Jest config needs TypeScript support (ts-jest)
+
+---
+
+## Success Metrics
+
+### Phase 2 Gate (Foundational)
+- ✅ `tsc --noEmit` passes with zero errors
+- ✅ All 153 Jest unit tests pass
+- ✅ No new ESLint errors
+
+### Final Migration Success (Phase 8)
+- ✅ 2,000-3,000 LOC reduction (20-30%)
+- ✅ All 153 tests + Playwright visual tests pass
+- ✅ Performance within ±10% variance
+- ✅ Code duplication ≤1.4%
+- ✅ No circular dependencies
+- ✅ Bundle size ≤current (ideally 20-30% smaller)
+
+---
+
+## Resources
+
+- **Tasks**: `specs/022-plasmo-migration/tasks.md` (161 tasks, dependency-ordered)
+- **Plan**: `specs/022-plasmo-migration/plan.md` (architecture, tech stack)
+- **Data Model**: `specs/022-plasmo-migration/data-model.md` (Zod schemas, entities)
+- **Contracts**: `specs/022-plasmo-migration/contracts/messaging-protocol.md`
+- **Research**: `specs/022-plasmo-migration/research.md` (decisions, alternatives)
+- **Quickstart**: `specs/022-plasmo-migration/quickstart.md` (phase-by-phase guide)
+
+---
+
+**Last Updated**: 2026-01-03
+**Maintainer**: VoxPage Development Team

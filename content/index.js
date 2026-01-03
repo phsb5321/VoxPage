@@ -254,6 +254,20 @@
         }
         break;
 
+      // T037: Toggle footer settings panel (021-comprehensive-overhaul US2)
+      // Triggered by toolbar icon click
+      case 'TOGGLE_FOOTER_SETTINGS':
+        if (window.VoxPage?.stickyFooter) {
+          // If footer is visible, toggle settings panel
+          // If footer is hidden, show it first
+          if (window.VoxPage.stickyFooter.isFooterVisible()) {
+            window.VoxPage.stickyFooter.toggleSettings?.();
+          } else {
+            window.VoxPage.stickyFooter.show();
+          }
+        }
+        break;
+
       // T021: Language extraction request (019-multilingual-tts)
       case 'extractLanguage':
         {

@@ -299,6 +299,25 @@ export function createRouter(deps = {}) {
     console.log(`VoxPage: User scrolled at ${userScrolledAt}`);
   });
 
+  // =========================================
+  // Timeline Ready ACK handler (021-comprehensive-overhaul FR-002, FR-023)
+  // =========================================
+
+  // TIMELINE_READY - Content script confirms receipt of word timeline
+  // This prevents the race condition during paragraph transitions
+  router.register('TIMELINE_READY', (msg, sender) => {
+    const { paragraphIndex, timestamp } = msg;
+
+    // Calculate latency for performance monitoring
+    const latency = Date.now() - timestamp;
+    if (latency > 50) {
+      getLogger().debug('Timeline ACK latency', 'background', { paragraphIndex, latency });
+    }
+
+    // Notify playback controller that timeline is ready
+    playbackController?.handleTimelineReady(paragraphIndex);
+  });
+
   // Remote logging handlers (014-loki-remote-logging)
   router.register('testLoggingConnection', async (msg, sender, sendResponse) => {
     try {
@@ -347,6 +366,34 @@ export function createRouter(deps = {}) {
   // =========================================
   // Footer message handlers (018-ui-redesign)
   // =========================================
+
+  // T032: TOGGLE_FOOTER_SETTINGS - Toggle footer settings panel visibility
+  // (021-comprehensive-overhaul US2) - Triggered by toolbar icon click
+  router.register('TOGGLE_FOOTER_SETTINGS', async (msg, sender, sendResponse) => {
+    try {
+      // Get the tab that sent this message, or active tab if sent from background
+      let tabId = sender.tab?.id;
+      if (!tabId) {
+        const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+        tabId = tabs[0]?.id;
+      }
+
+      if (tabId) {
+        // Forward toggle message to content script
+        await browser.tabs.sendMessage(tabId, {
+          action: 'TOGGLE_FOOTER_SETTINGS'
+        });
+        getLogger().debug('Footer settings toggled', 'background');
+        sendResponse?.({ success: true });
+      } else {
+        sendResponse?.({ success: false, error: 'No active tab' });
+      }
+    } catch (error) {
+      getLogger().error('Failed to toggle footer settings', 'background', { error: error.message });
+      sendResponse?.({ success: false, error: error.message });
+    }
+    return true;
+  });
 
   // T018: FOOTER_SHOW - Instructs content script to show the footer
   router.register(FooterMessageTypes.FOOTER_SHOW, async (msg, sender, sendResponse) => {

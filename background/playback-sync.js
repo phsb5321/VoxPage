@@ -90,6 +90,46 @@ export class PlaybackSyncState {
 
     /** @type {boolean} - Enable performance logging */
     this._perfLogging = false;
+
+    /** @type {boolean} - Timeline ready flag (FR-002, FR-023, 021-comprehensive-overhaul)
+     * Prevents race condition during paragraph transitions.
+     * Set to false before sending timeline to content, set to true when ACK received.
+     */
+    this._timelineReady = true;
+
+    /** @type {number} - Paragraph index for which we're awaiting timeline ready */
+    this._pendingTimelineParagraph = -1;
+  }
+
+  /**
+   * Check if timeline is ready for highlighting (FR-002, FR-023)
+   * @returns {boolean}
+   */
+  get timelineReady() {
+    return this._timelineReady;
+  }
+
+  /**
+   * Mark timeline as not ready (called before sending timeline to content)
+   * @param {number} paragraphIndex - The paragraph index being prepared
+   */
+  setTimelinePending(paragraphIndex) {
+    this._timelineReady = false;
+    this._pendingTimelineParagraph = paragraphIndex;
+  }
+
+  /**
+   * Mark timeline as ready (called when TIMELINE_READY ACK received from content)
+   * @param {number} paragraphIndex - The paragraph index that is now ready
+   */
+  setTimelineReady(paragraphIndex) {
+    // Only accept ACK for the expected paragraph
+    if (paragraphIndex === this._pendingTimelineParagraph || this._pendingTimelineParagraph === -1) {
+      this._timelineReady = true;
+      this._pendingTimelineParagraph = -1;
+    } else {
+      console.warn(`VoxPage: Ignoring TIMELINE_READY for paragraph ${paragraphIndex}, expected ${this._pendingTimelineParagraph}`);
+    }
   }
 
   /**
@@ -527,9 +567,17 @@ export class PlaybackSyncState {
     // Paragraph highlighting is handled directly by playCurrentParagraph().
     // The sync loop is ONLY for word-level sync within the current paragraph.
 
-    // Sync word if available (FR-004: <100ms latency)
-    if (this.hasWordTiming) {
+    // FR-002, FR-023: Only sync words if timeline is ready
+    // This prevents the race condition during paragraph transitions where
+    // the sync loop runs before the content script has received the new timeline
+    if (this.hasWordTiming && this._timelineReady) {
       this.syncToWord();
+    } else if (this.hasWordTiming && !this._timelineReady) {
+      // Timeline not yet ready, skip word sync this frame
+      // This prevents sending highlightWord messages before content has timeline
+      if (this._perfLogging) {
+        console.debug('VoxPage: Skipping word sync - timeline not ready yet');
+      }
     }
 
     // Report progress
@@ -650,6 +698,9 @@ export class PlaybackSyncState {
     // Reset performance counters (T052)
     this._lastSyncDurationMs = 0;
     this._maxSyncDurationMs = 0;
+    // Reset timeline ready state (FR-002, FR-023)
+    this._timelineReady = true;
+    this._pendingTimelineParagraph = -1;
   }
 
   /**

@@ -53,7 +53,7 @@
  * @see background/ui-coordinator.js - Handles UI notifications
  */
 
-import { MessageType, FooterMessageTypes, FooterActions, StorageKey, LanguageMessageTypes } from './constants.js';
+import { FooterMessageTypes, FooterActions, StorageKey, LanguageMessageTypes } from './constants.js';
 import { getLogger } from './remote-logger.js';
 import { footerStateDefaults } from '../shared/config/defaults.js';
 import {

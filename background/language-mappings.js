@@ -31,7 +31,7 @@ import { normalizeLanguageCode } from '../shared/language-codes.js';
 export const LANGUAGE_MAPPINGS = Object.freeze({
   en: {
     bcp47: 'en',
-    providers: { elevenlabs: null, openai: null, browser: 'en-US', groq: null, cartesia: null },
+    providers: { elevenlabs: null, openai: null, browser: 'en-US', groq: 'en', cartesia: 'en' },
     displayName: 'English',
     iso639_1: 'en'
   },

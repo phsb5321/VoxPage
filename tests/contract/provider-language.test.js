@@ -223,13 +223,14 @@ describe('Provider Language Support Contracts', () => {
 
     test('GroqProvider allows English', async () => {
       const { GroqProvider } = await import('../../background/providers/groq-provider.js');
+      const { LanguageNotSupportedError } = await import('../../shared/errors/language-errors.js');
 
       const provider = new GroqProvider('test-key');
 
-      // Should not throw for language check (will throw for missing API call)
+      // Should not throw LanguageNotSupportedError for English (may throw other errors like fetch)
       await expect(
         provider.generateAudio('Hello world', 'hannah', { languageCode: 'en' })
-      ).rejects.not.toThrow(expect.objectContaining({ name: 'LanguageNotSupportedError' }));
+      ).rejects.not.toBeInstanceOf(LanguageNotSupportedError);
     });
   });
 });

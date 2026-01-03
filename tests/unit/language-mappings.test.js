@@ -47,11 +47,19 @@ describe('Language Mappings', () => {
       });
     });
 
-    test('Groq and Cartesia are null for non-English', () => {
-      Object.entries(LANGUAGE_MAPPINGS).forEach(([code, mapping]) => {
-        expect(mapping.providers.groq).toBeNull();
-        expect(mapping.providers.cartesia).toBeNull();
-      });
+    test('Groq and Cartesia are null for non-English languages', () => {
+      Object.entries(LANGUAGE_MAPPINGS)
+        .filter(([code]) => code !== 'en')
+        .forEach(([code, mapping]) => {
+          expect(mapping.providers.groq).toBeNull();
+          expect(mapping.providers.cartesia).toBeNull();
+        });
+    });
+
+    test('Groq and Cartesia support English', () => {
+      const enMapping = LANGUAGE_MAPPINGS.en;
+      expect(enMapping.providers.groq).toBe('en');
+      expect(enMapping.providers.cartesia).toBe('en');
     });
   });
 

@@ -13,7 +13,7 @@
  *
  * @returns {Object} Language extraction result
  * @property {string|null} metadata - HTML lang attribute value
- * @property {string} textSample - Text sample for detection (first 500 chars)
+ * @property {string} textSample - Text sample for detection (500-1000 chars)
  * @property {string} url - Current page URL
  */
 export function extractPageLanguage() {
@@ -48,7 +48,7 @@ export function extractPageLanguage() {
  * Extract a text sample from the page for language detection
  * Prioritizes main content areas over navigation/footer
  *
- * @returns {string} Text sample (500-1000 chars)
+ * @returns {string} Text sample (up to 1000 chars from main content)
  */
 function extractTextSample() {
   // Priority selectors for main content

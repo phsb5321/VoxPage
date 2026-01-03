@@ -37,6 +37,8 @@ import { settingsStore } from '../shared/config/store.js';
 // T037: Import voice filtering (019-multilingual-tts)
 // T039: Also import providerSupportsLanguage for modal check
 import { getVoicesForLanguage, providerSupportsLanguage } from '../background/language-mappings.js';
+// Import language message types for consistency
+import { LanguageMessageTypes } from '../background/constants.js';
 
 /**
  * Application state - uses SSOT defaults from shared/config
@@ -349,7 +351,7 @@ export function handleBackgroundMessage(message) {
       break;
     // T033: Handle language state updates (019-multilingual-tts)
     // T040: Re-filter voices when language changes
-    case 'languageStateUpdate':
+    case LanguageMessageTypes.LANGUAGE_STATE_UPDATE:
       state.detectedLanguage = message.detected?.primaryCode || null;
       state.languageOverride = message.override || null;
       state.effectiveLanguage = message.effective || 'en';
@@ -442,7 +444,7 @@ export async function showFooterPlayer() {
  */
 export async function fetchLanguageState() {
   try {
-    const response = await browser.runtime.sendMessage({ action: 'getLanguageState' });
+    const response = await browser.runtime.sendMessage({ action: LanguageMessageTypes.GET_LANGUAGE_STATE });
     if (response) {
       state.detectedLanguage = response.detected?.primaryCode || null;
       state.languageOverride = response.override || null;
@@ -472,13 +474,13 @@ export async function setLanguageOverride(languageCode) {
   try {
     if (languageCode) {
       await browser.runtime.sendMessage({
-        action: 'setLanguageOverride',
+        action: LanguageMessageTypes.SET_LANGUAGE_OVERRIDE,
         languageCode
       });
       state.languageOverride = languageCode;
       state.effectiveLanguage = languageCode;
     } else {
-      await browser.runtime.sendMessage({ action: 'clearLanguageOverride' });
+      await browser.runtime.sendMessage({ action: LanguageMessageTypes.CLEAR_LANGUAGE_OVERRIDE });
       state.languageOverride = null;
       state.effectiveLanguage = state.detectedLanguage || 'en';
     }

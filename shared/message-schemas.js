@@ -289,6 +289,110 @@ export const SyncStatusMessageSchema = z.object({
 });
 
 // =============================================================================
+// Timeline Synchronization Messages (FR-002, FR-023)
+// =============================================================================
+
+/**
+ * Timeline ready acknowledgment - Content confirms receipt of word timeline
+ * Direction: content → background
+ * Used to prevent race condition during paragraph transitions
+ */
+export const TimelineReadyMessageSchema = z.object({
+  type: z.literal('TIMELINE_READY'),
+  paragraphIndex: z.number().int().min(0),
+  timestamp: z.number()
+});
+
+// =============================================================================
+// Footer Control Messages (FR-007, FR-009)
+// =============================================================================
+
+/**
+ * Toggle footer settings panel visibility
+ * Direction: background → content (triggered by toolbar icon click)
+ */
+export const ToggleFooterSettingsMessageSchema = z.object({
+  type: z.literal('TOGGLE_FOOTER_SETTINGS')
+});
+
+/**
+ * Footer show message
+ * Direction: background → content
+ */
+export const FooterShowMessageSchema = z.object({
+  type: z.literal('FOOTER_SHOW'),
+  expanded: z.boolean().optional()
+});
+
+/**
+ * Footer hide message
+ * Direction: background → content
+ */
+export const FooterHideMessageSchema = z.object({
+  type: z.literal('FOOTER_HIDE')
+});
+
+/**
+ * Footer state update message
+ * Direction: background → content
+ */
+export const FooterStateUpdateMessageSchema = z.object({
+  type: z.literal('FOOTER_STATE_UPDATE'),
+  isPlaying: z.boolean(),
+  isPaused: z.boolean(),
+  currentIndex: z.number().int().min(0),
+  totalParagraphs: z.number().int().min(0),
+  currentTime: z.number().min(0),
+  duration: z.number().min(0),
+  speed: z.number().min(0.5).max(2.0)
+});
+
+// =============================================================================
+// Settings Sync Messages (FR-007)
+// =============================================================================
+
+/**
+ * Settings changed message from quick settings panel
+ * Direction: content → background
+ */
+export const SettingsChangedMessageSchema = z.object({
+  type: z.literal('SETTINGS_CHANGED'),
+  setting: z.enum(['provider', 'voice', 'speed', 'mode', 'language']),
+  value: z.union([z.string(), z.number(), z.null()])
+});
+
+/**
+ * Get settings message
+ * Direction: content → background
+ */
+export const GetSettingsMessageSchema = z.object({
+  type: z.literal('GET_SETTINGS')
+});
+
+/**
+ * Get voices message
+ * Direction: content → background
+ */
+export const GetVoicesMessageSchema = z.object({
+  type: z.literal('GET_VOICES'),
+  provider: z.string(),
+  language: z.string().optional()
+});
+
+// =============================================================================
+// Context Menu Messages (FR-008)
+// =============================================================================
+
+/**
+ * Context menu action message
+ * Direction: background → content
+ */
+export const ContextMenuActionMessageSchema = z.object({
+  type: z.literal('CONTEXT_MENU_ACTION'),
+  action: z.enum(['play-article', 'play-selection', 'pause', 'settings'])
+});
+
+// =============================================================================
 // Content Script Actions (background → content)
 // =============================================================================
 
@@ -463,4 +567,109 @@ export function validateOutgoingContentMessage(message) {
  */
 export function assertMessage(schema, message) {
   return schema.parse(message);
+}
+
+// =============================================================================
+// Generic Message Validation (FR-021)
+// =============================================================================
+
+/**
+ * Message schema map - maps message type/action to schema
+ * Used by validateMessage() for router-level validation
+ */
+export const MessageSchemas = {
+  // Playback control (action-based)
+  'play': PlayMessageSchema,
+  'pause': PauseMessageSchema,
+  'resume': ResumeMessageSchema,
+  'stop': StopMessageSchema,
+  'prev': PrevMessageSchema,
+  'next': NextMessageSchema,
+
+  // Settings (action-based)
+  'setProvider': SetProviderMessageSchema,
+  'setVoice': SetVoiceMessageSchema,
+  'setSpeed': SetSpeedMessageSchema,
+  'getState': GetStateMessageSchema,
+  'getProviders': GetProvidersMessageSchema,
+  'getVisualizerData': GetVisualizerDataMessageSchema,
+
+  // Content script (action-based)
+  'textContent': TextContentMessageSchema,
+  'jumpToParagraph': JumpToParagraphMessageSchema,
+  'jumpToWord': JumpToWordMessageSchema,
+  'controllerAction': ControllerActionMessageSchema,
+  'visibilityChanged': VisibilityChangedMessageSchema,
+  'requestResync': RequestResyncMessageSchema,
+  'controllerPositionChanged': ControllerPositionChangedMessageSchema,
+  'seekToPosition': SeekToPositionMessageSchema,
+  'setOnboardingComplete': SetOnboardingCompleteMessageSchema,
+
+  // Highlight actions (action-based, background → content)
+  'highlight': HighlightMessageSchema,
+  'highlightWord': HighlightWordMessageSchema,
+  'setWordTimeline': SetWordTimelineMessageSchema,
+  'clearHighlight': ClearHighlightMessageSchema,
+  'showFloatingController': ShowFloatingControllerMessageSchema,
+  'hideFloatingController': HideFloatingControllerMessageSchema,
+  'updatePlaybackState': UpdatePlaybackStateMessageSchema,
+
+  // NEW: Timeline sync (type-based, FR-002/FR-023)
+  'TIMELINE_READY': TimelineReadyMessageSchema,
+
+  // NEW: Footer control (type-based, FR-007/FR-009)
+  'TOGGLE_FOOTER_SETTINGS': ToggleFooterSettingsMessageSchema,
+  'FOOTER_SHOW': FooterShowMessageSchema,
+  'FOOTER_HIDE': FooterHideMessageSchema,
+  'FOOTER_STATE_UPDATE': FooterStateUpdateMessageSchema,
+
+  // NEW: Settings sync (type-based, FR-007)
+  'SETTINGS_CHANGED': SettingsChangedMessageSchema,
+  'GET_SETTINGS': GetSettingsMessageSchema,
+  'GET_VOICES': GetVoicesMessageSchema,
+
+  // NEW: Context menu (type-based, FR-008)
+  'CONTEXT_MENU_ACTION': ContextMenuActionMessageSchema,
+
+  // Notifications (type-based)
+  'playbackState': PlaybackStateMessageSchema,
+  'progress': ProgressMessageSchema,
+  'error': ErrorMessageSchema,
+  'paragraphChanged': ParagraphChangedMessageSchema,
+  'syncStatus': SyncStatusMessageSchema
+};
+
+/**
+ * Validate any message using the schema map
+ * Supports both 'action' and 'type' discriminators
+ *
+ * @param {unknown} message - The message to validate
+ * @returns {{ success: true, data: object } | { success: false, error: { issues: Array<{message: string, path: Array<string>}> } }}
+ */
+export function validateMessage(message) {
+  if (!message || typeof message !== 'object') {
+    return {
+      success: false,
+      error: { issues: [{ message: 'Message must be an object', path: [] }] }
+    };
+  }
+
+  // Get the message type from either 'type' or 'action' property
+  const messageType = message.type || message.action;
+
+  if (!messageType) {
+    return {
+      success: false,
+      error: { issues: [{ message: 'Message must have type or action property', path: [] }] }
+    };
+  }
+
+  const schema = MessageSchemas[messageType];
+
+  if (!schema) {
+    // Unknown message types pass through (for extensibility)
+    return { success: true, data: message };
+  }
+
+  return schema.safeParse(message);
 }

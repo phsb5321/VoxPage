@@ -117,13 +117,36 @@ browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
 });
 
 /**
- * Initialize context menu
+ * Initialize context menu (T038: 021-comprehensive-overhaul US2)
+ * Full context menu for page and selection actions
  */
 browser.runtime.onInstalled.addListener(() => {
+  // Play article - available on any page
+  browser.contextMenus.create({
+    id: 'voxpage-play-article',
+    title: 'Read Page with VoxPage',
+    contexts: ['page']
+  });
+
+  // Read selection - only when text is selected
   browser.contextMenus.create({
     id: 'voxpage-read-selection',
-    title: 'Read with VoxPage',
+    title: 'Read Selection with VoxPage',
     contexts: ['selection']
+  });
+
+  // Pause playback
+  browser.contextMenus.create({
+    id: 'voxpage-pause',
+    title: 'Pause VoxPage',
+    contexts: ['page']
+  });
+
+  // Open settings
+  browser.contextMenus.create({
+    id: 'voxpage-settings',
+    title: 'VoxPage Settings',
+    contexts: ['page']
   });
 });
 
@@ -136,6 +159,39 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
       mode: 'selection',
       text: info.selectionText
     }, tab);
+  } else if (info.menuItemId === 'voxpage-play-article') {
+    playbackController.handlePlay({
+      mode: 'article'
+    }, tab);
+  } else if (info.menuItemId === 'voxpage-pause') {
+    playbackController.handlePause();
+  } else if (info.menuItemId === 'voxpage-settings') {
+    browser.runtime.openOptionsPage();
+  }
+});
+
+/**
+ * T031: Handle toolbar icon click (021-comprehensive-overhaul US2)
+ * Without a popup, clicking the toolbar icon toggles the footer settings panel
+ */
+browser.action.onClicked.addListener(async (tab) => {
+  try {
+    // Check if this is a restricted page where we can't inject
+    if (tab.url?.startsWith('about:') ||
+        tab.url?.startsWith('moz-extension:') ||
+        tab.url?.startsWith('chrome:') ||
+        tab.url?.includes('addons.mozilla.org')) {
+      // On restricted pages, open options page instead
+      browser.runtime.openOptionsPage();
+      return;
+    }
+
+    // Toggle footer settings panel on regular pages
+    await browser.tabs.sendMessage(tab.id, { type: 'TOGGLE_FOOTER_SETTINGS' });
+  } catch (error) {
+    // If content script isn't loaded, open options page
+    console.warn('VoxPage: Could not toggle footer, opening options page:', error.message);
+    browser.runtime.openOptionsPage();
   }
 });
 

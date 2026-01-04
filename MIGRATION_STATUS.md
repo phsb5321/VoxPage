@@ -3,17 +3,17 @@
 **Feature**: 022-plasmo-migration
 **Branch**: `022-plasmo-migration`
 **Last Updated**: 2026-01-03
-**Overall Progress**: 19 of 161 tasks complete (11.8%)
+**Overall Progress**: 22 of 161 tasks complete (13.7%)
 
 ## Executive Summary
 
 The VoxPage browser extension is being migrated from vanilla JavaScript + JSDoc to TypeScript + WXT framework. This is a **5-6 week project** with 161 tasks across 8 phases. The foundation is established with WXT configured, TypeScript working, and core modules converted.
 
-**Status**: Phase 1 complete ✅ | Phase 2 in progress 🔄 (41% done)
+**Status**: Phase 1 complete ✅ | Phase 2 in progress 🔄 (48% done)
 
 ---
 
-## Commits Pushed (9 total)
+## Commits Pushed (10 total)
 
 ### Commit 1: `5914c86` - Phase 1 Foundation
 **Date**: 2026-01-03
@@ -156,15 +156,33 @@ Created:
 
 **Key Achievement**: Complete remote logging infrastructure with Loki integration
 
+### Commit 10: `f84b032` - Partial Content Modules
+**Date**: 2026-01-03
+**Tasks**: T032, T033, T035 (3 of 5 tasks)
+
+```
+feat(content): convert 3 of 5 content modules to TypeScript (partial batch 4)
+
+Created:
+- utils/content/scorer.ts - Content scoring heuristics (Trafilatura-inspired)
+- utils/content/highlight.ts - Highlight manager with CSS Custom Highlight API
+- utils/content/text-segment.ts - Text-to-DOM mapping for word highlighting
+
+Note: content-extractor.ts (1167 lines) and sticky-footer.ts (994 lines)
+deferred to next session due to size/complexity.
+```
+
+**Key Achievement**: Core content processing modules with type safety (3/5 complete)
+
 ---
 
 ## Phase 2: TypeScript Conversion Status
 
 **Goal**: Convert entire JavaScript + JSDoc codebase to TypeScript with Zod-first types
 **Gate**: `tsc --noEmit` passes + all 153 tests pass
-**Progress**: 19 of 46 tasks (41%)
+**Progress**: 22 of 46 tasks (48%)
 
-### ✅ Completed (19 tasks)
+### ✅ Completed (22 tasks)
 
 **Config Modules**:
 - [X] T013 - Config schema.ts
@@ -192,34 +210,26 @@ Created:
 - [X] T029 - Logging entry.ts
 - [X] T030 - Logging buffer.ts
 
-### 📋 Next Batch: Content Modules (5 tasks)
+**Content Modules** (partial):
+- [X] T032 - Content scorer.ts
+- [X] T033 - Content highlight.ts
+- [X] T035 - Content text-segment.ts
+
+### 📋 Next Batch: Complete Content Modules (2 tasks remaining)
 
 **Resume Point**: T031 (Content Extractor)
 
 **Remaining**:
 
-- [ ] T031 - content-extractor.js → utils/content/extractor.ts
-- [ ] T032 - content-scorer.js → utils/content/scorer.ts
-- [ ] T033 - highlight-manager.js → utils/content/highlight.ts
-- [ ] T034 - sticky-footer.js → utils/content/sticky-footer.ts
-- [ ] T035 - text-segment.js → utils/content/text-segment.ts
+- [ ] T031 - content-extractor.js → utils/content/extractor.ts (1167 lines - complex Readability integration)
+- [ ] T034 - sticky-footer.js → utils/content/sticky-footer.ts (994 lines - Shadow DOM component)
 
-**Estimated Time**: 1.5 hours
-**Commit After**: Batch 4 complete
+**Estimated Time**: 2 hours (large/complex files)
+**Commit After**: Content modules fully complete
 
-### 📋 Batch 5: Language Detection (5 tasks)
+**Note**: These 2 files are significantly larger and more complex than typical modules. Consider breaking down into sub-tasks if needed.
 
-- [ ] T036 - Remove CLD3 dependency
-- [ ] T037 - language-detector.js → utils/language/detector.ts (with franc-min)
-- [ ] T038 - language-mappings.js → utils/language/mappings.ts
-- [ ] T039 - language-extractor.js → utils/language/extractor.ts
-- [ ] T040 - Create utils/language/types.ts
-
-**Estimated Time**: 1.5 hours
-**Key Change**: Replace CLD3 WASM with franc-min (pure JavaScript)
-**Commit After**: Batch 5 complete
-
-### 📋 Batch 6: Test Infrastructure (6 tasks)
+### 📋 Batch 5: Test Infrastructure (6 tasks)
 
 - [ ] T041 - Update all test imports (@/ path aliases)
 - [ ] T042 - Add TypeScript Jest configuration
@@ -314,7 +324,7 @@ Created:
    git pull origin 022-plasmo-migration
    ```
 
-2. **Run `/speckit.implement` and continue from T031**
+2. **Run `/speckit.implement` to continue from T031** (or skip to T036 for language modules)
 
 3. **Batch Workflow**:
    - Convert files in batch

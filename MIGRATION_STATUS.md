@@ -3,17 +3,17 @@
 **Feature**: 022-plasmo-migration
 **Branch**: `022-plasmo-migration`
 **Last Updated**: 2026-01-03
-**Overall Progress**: 7 of 161 tasks complete (4.3%)
+**Overall Progress**: 10 of 161 tasks complete (6.2%)
 
 ## Executive Summary
 
 The VoxPage browser extension is being migrated from vanilla JavaScript + JSDoc to TypeScript + WXT framework. This is a **5-6 week project** with 161 tasks across 8 phases. The foundation is established with WXT configured, TypeScript working, and core modules converted.
 
-**Status**: Phase 1 complete ✅ | Phase 2 in progress 🔄 (15% done)
+**Status**: Phase 1 complete ✅ | Phase 2 in progress 🔄 (22% done)
 
 ---
 
-## Commits Pushed (3 total)
+## Commits Pushed (5 total)
 
 ### Commit 1: `5914c86` - Phase 1 Foundation
 **Date**: 2026-01-03
@@ -64,15 +64,45 @@ Created:
 
 **Key Achievement**: Core playback engine converted with type safety
 
+### Commit 4: `bb2f6ec` - Migration Documentation
+**Date**: 2026-01-03
+**Tasks**: Documentation only
+
+```
+docs: add comprehensive migration tracking documentation
+
+Created MIGRATION_STATUS.md with:
+- All 3 commit details and progress tracking
+- Phase 2 breakdown into 6 batches
+- Quick resume guide from Task T019
+```
+
+**Key Achievement**: Comprehensive tracking document for future sessions
+
+### Commit 5: `1e25229` - Audio Modules
+**Date**: 2026-01-03
+**Tasks**: T019, T020 (2 tasks)
+
+```
+feat(typescript): convert audio modules to TypeScript with Zod
+
+Created:
+- utils/audio/segment.ts - AudioSegment class with Zod metadata validation
+- utils/audio/cache.ts - AudioCache LRU cache with configurable limits
+- utils/audio/visualizer.ts - AudioVisualizer class for Web Audio API
+```
+
+**Key Achievement**: Complete audio infrastructure with Zod schemas and TypeScript types
+
 ---
 
 ## Phase 2: TypeScript Conversion Status
 
 **Goal**: Convert entire JavaScript + JSDoc codebase to TypeScript with Zod-first types
 **Gate**: `tsc --noEmit` passes + all 153 tests pass
-**Progress**: 7 of 46 tasks (15%)
+**Progress**: 10 of 46 tasks (22%)
 
-### ✅ Completed (7 tasks)
+### ✅ Completed (10 tasks)
 
 - [X] T013 - Config schema.ts
 - [X] T014 - Config defaults.ts
@@ -80,19 +110,19 @@ Created:
 - [X] T016 - Config migrations.ts
 - [X] T017 - Config index.ts
 - [X] T018 - Audio playback-sync.ts
+- [X] T019 - Audio cache.ts + segment.ts
+- [X] T020 - Audio visualizer.ts
 - [X] T027 - Provider base.ts
+- [X] T021 (partial) - Provider pricing.ts + openai.ts stub
 
-### 📋 Next Batch: Audio Modules (2 tasks)
+### 📋 Next Batch: TTS Providers (5 tasks remaining)
 
-**Resume Point**: T019
+**Resume Point**: T022 (ElevenLabs provider)
 
-- [ ] T019 - Convert audio-cache.js → utils/audio/cache.ts
-- [ ] T020 - Convert audio-visualizer.js → utils/audio/visualizer.ts
+**Completed**:
+- [X] T021 (partial) - pricing.ts + openai.ts created, needs completion
 
-**Estimated Time**: 30 minutes
-**Commit After**: Batch 1 complete
-
-### 📋 Batch 2: TTS Providers (6 tasks)
+**Remaining**:
 
 - [ ] T021 - openai-provider.js → utils/providers/openai.ts
 - [ ] T022 - elevenlabs-provider.js → utils/providers/elevenlabs.ts

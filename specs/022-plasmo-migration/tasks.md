@@ -94,8 +94,8 @@ current JavaScript implementation on Wikipedia test page with 200 paragraphs.
 ### Background Module Conversion (Foundational)
 
 - [X] T018 [P] Convert background/playback-sync.js → utils/audio/playback-sync.ts (PlaybackSyncState class with playbackStateSchema)
-- [ ] T019 [P] Convert background/audio-cache.js → utils/audio/cache.ts (AudioCache class)
-- [ ] T020 [P] Convert background/audio-visualizer.js → utils/audio/visualizer.ts
+- [X] T019 [P] Convert background/audio-cache.js → utils/audio/cache.ts (AudioCache class)
+- [X] T020 [P] Convert background/audio-visualizer.js → utils/audio/visualizer.ts
 - [ ] T021 [P] Convert background/providers/openai-provider.js → utils/providers/openai.ts (ITTSProvider interface, ttsRequestSchema, ttsResponseSchema)
 - [ ] T022 [P] Convert background/providers/elevenlabs-provider.js → utils/providers/elevenlabs.ts
 - [ ] T023 [P] Convert background/providers/cartesia-provider.js → utils/providers/cartesia.ts

@@ -107,17 +107,34 @@
 
   /**
    * Set word timeline for the current paragraph
+   * Sends TIMELINE_READY acknowledgment to background (FR-002, FR-023)
    * @param {Array} wordTimeline - Array of word timing data
    * @param {number} paragraphIndex - Paragraph index
    */
   function setWordTimeline(wordTimeline, paragraphIndex) {
     currentWordTimeline = wordTimeline;
     currentParagraphForWords = paragraphIndex;
+
+    // FR-002, FR-023: Send acknowledgment that timeline is ready
+    // This prevents the race condition where sync loop tries to highlight
+    // before the timeline data is available
+    try {
+      browser.runtime.sendMessage({
+        type: 'TIMELINE_READY',
+        paragraphIndex,
+        timestamp: Date.now()
+      }).catch(() => {
+        // Ignore send errors - background may not be ready
+      });
+    } catch (e) {
+      console.warn('VoxPage: Failed to send TIMELINE_READY:', e);
+    }
   }
 
   /**
    * Highlight a specific word using CSS Custom Highlight API
    * Implements FR-002: Word highlight within 100ms
+   * Implements FR-004: Paragraph index validation
    * @param {number} paragraphIndex - Paragraph index
    * @param {number} wordIndex - Word index
    * @param {number} [timestamp] - Timestamp for sync verification
@@ -137,6 +154,13 @@
     }
 
     if (!currentWordTimeline || currentWordTimeline.length === 0) {
+      return;
+    }
+
+    // FR-004: Validate paragraph index matches current timeline
+    // This prevents highlighting words on the wrong paragraph during transitions
+    if (paragraphIndex !== currentParagraphForWords) {
+      console.warn(`VoxPage: Paragraph mismatch (expected ${currentParagraphForWords}, got ${paragraphIndex}), ignoring highlightWord`);
       return;
     }
 
@@ -316,9 +340,23 @@
   }
 
   /**
-   * Clear word highlight
+   * Clear word highlight visually only (FR-003)
+   * Does NOT clear timeline data - used during paragraph transitions
+   * to prevent race condition where sync loop runs before new timeline arrives
    */
-  function clearWordHighlight() {
+  function clearWordHighlightVisual() {
+    if (wordHighlightSupported && CSS.highlights) {
+      CSS.highlights.delete('voxpage-word');
+    }
+    // NOTE: Do NOT clear currentWordTimeline or currentParagraphForWords here
+    // This prevents the race condition during paragraph transitions
+  }
+
+  /**
+   * Clear word highlight fully (visual + data)
+   * Use this only when stopping playback completely
+   */
+  function clearWordHighlightFull() {
     if (wordHighlightSupported && CSS.highlights) {
       CSS.highlights.delete('voxpage-word');
     }
@@ -327,11 +365,23 @@
   }
 
   /**
-   * Clear all highlights
+   * Clear word highlight (legacy alias - clears visually only for compatibility)
+   * @deprecated Use clearWordHighlightVisual() or clearWordHighlightFull() instead
+   */
+  function clearWordHighlight() {
+    // FR-003: During paragraph transitions, only clear visual, not data
+    // This prevents the race condition where highlightWord() fails because
+    // currentWordTimeline is null before the new timeline arrives
+    clearWordHighlightVisual();
+  }
+
+  /**
+   * Clear all highlights (for complete stop)
+   * Uses clearWordHighlightFull() to also clear timeline data
    */
   function clearHighlights() {
     clearParagraphHighlights();
-    clearWordHighlight();
+    clearWordHighlightFull(); // Use full clear when stopping completely
   }
 
   /**
@@ -357,6 +407,9 @@
     clearHighlights,
     clearParagraphHighlights,
     clearWordHighlight,
+    // New split functions (021-comprehensive-overhaul FR-003)
+    clearWordHighlightVisual,
+    clearWordHighlightFull,
     createWordRange,
     getCurrentHighlightedElement,
     isWordHighlightSupported,

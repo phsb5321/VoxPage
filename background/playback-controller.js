@@ -565,6 +565,16 @@ export class PlaybackController {
   }
 
   /**
+   * Handle timeline ready acknowledgment from content script (FR-002, FR-023)
+   * Called when content script confirms receipt of word timeline data
+   * @param {number} paragraphIndex - Paragraph index that is now ready
+   */
+  handleTimelineReady(paragraphIndex) {
+    this.syncState.setTimelineReady(paragraphIndex);
+    console.log(`VoxPage: Timeline ready ACK for paragraph ${paragraphIndex}`);
+  }
+
+  /**
    * Handle resync request from content script
    * @param {string} reason - Reason for resync
    */
@@ -747,12 +757,18 @@ export class PlaybackController {
 
   /**
    * Setup word timeline for sync
+   * FR-002, FR-023: Uses timeline-ready acknowledgment pattern to prevent race condition
    * @param {Array|null} wordTiming
    * @param {Object|null} cachedSegment
    * @private
    */
   _setupWordTimeline(wordTiming, cachedSegment) {
     if (wordTiming && wordTiming.length > 0) {
+      // FR-002: Mark timeline as pending before sending to content script
+      // This prevents the sync loop from trying to highlight words before
+      // the content script has received the timeline data
+      this.syncState.setTimelinePending(this.state.currentIndex);
+
       this.syncState.setWordTimeline(wordTiming);
       this.uiCoordinator?.sendWordTimeline(wordTiming, this.state.currentIndex);
 

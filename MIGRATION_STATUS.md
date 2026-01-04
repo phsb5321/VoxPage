@@ -3,17 +3,17 @@
 **Feature**: 022-plasmo-migration
 **Branch**: `022-plasmo-migration`
 **Last Updated**: 2026-01-03
-**Overall Progress**: 16 of 161 tasks complete (9.9%)
+**Overall Progress**: 19 of 161 tasks complete (11.8%)
 
 ## Executive Summary
 
 The VoxPage browser extension is being migrated from vanilla JavaScript + JSDoc to TypeScript + WXT framework. This is a **5-6 week project** with 161 tasks across 8 phases. The foundation is established with WXT configured, TypeScript working, and core modules converted.
 
-**Status**: Phase 1 complete ✅ | Phase 2 in progress 🔄 (35% done)
+**Status**: Phase 1 complete ✅ | Phase 2 in progress 🔄 (41% done)
 
 ---
 
-## Commits Pushed (7 total)
+## Commits Pushed (9 total)
 
 ### Commit 1: `5914c86` - Phase 1 Foundation
 **Date**: 2026-01-03
@@ -126,15 +126,45 @@ Created:
 
 **Key Achievement**: Complete provider ecosystem with type-safe API integrations
 
+### Commit 8: `e81b047` - Update Documentation
+**Date**: 2026-01-03
+**Tasks**: Documentation only
+
+```
+docs: update MIGRATION_STATUS.md with Batch 2 completion
+
+Updated MIGRATION_STATUS.md with:
+- Commit 7 details for TTS providers
+- Progress tracking: 16/161 tasks complete (9.9%)
+- Phase 2 status: 35% done
+```
+
+**Key Achievement**: Comprehensive tracking of provider conversion progress
+
+### Commit 9: `15ece9b` - Logging Infrastructure
+**Date**: 2026-01-03
+**Tasks**: T028-T030 (3 tasks)
+
+```
+feat(logging): complete logging infrastructure TypeScript conversion
+
+Created:
+- utils/logging/entry.ts - LogEntry model with nanosecond timestamps
+- utils/logging/buffer.ts - Circular buffer with LRU eviction
+- utils/logging/logger.ts - RemoteLogger with Loki HTTP Push API
+```
+
+**Key Achievement**: Complete remote logging infrastructure with Loki integration
+
 ---
 
 ## Phase 2: TypeScript Conversion Status
 
 **Goal**: Convert entire JavaScript + JSDoc codebase to TypeScript with Zod-first types
 **Gate**: `tsc --noEmit` passes + all 153 tests pass
-**Progress**: 16 of 46 tasks (35%)
+**Progress**: 19 of 46 tasks (41%)
 
-### ✅ Completed (16 tasks)
+### ✅ Completed (19 tasks)
 
 **Config Modules**:
 - [X] T013 - Config schema.ts
@@ -157,20 +187,16 @@ Created:
 - [X] T026 - Provider groq-timestamp.ts
 - [X] T027 - Provider base.ts
 
-### 📋 Next Batch: Logging Modules (3 tasks)
+**Logging Modules**:
+- [X] T028 - Logging logger.ts
+- [X] T029 - Logging entry.ts
+- [X] T030 - Logging buffer.ts
 
-**Resume Point**: T028 (Remote Logger)
+### 📋 Next Batch: Content Modules (5 tasks)
+
+**Resume Point**: T031 (Content Extractor)
 
 **Remaining**:
-
-- [ ] T028 - remote-logger.js → utils/logging/logger.ts
-- [ ] T029 - log-entry.js → utils/logging/entry.ts
-- [ ] T030 - log-buffer.js → utils/logging/buffer.ts
-
-**Estimated Time**: 45 minutes
-**Commit After**: Batch 3 complete
-
-### 📋 Batch 4: Content Modules (5 tasks)
 
 - [ ] T031 - content-extractor.js → utils/content/extractor.ts
 - [ ] T032 - content-scorer.js → utils/content/scorer.ts
@@ -288,7 +314,7 @@ Created:
    git pull origin 022-plasmo-migration
    ```
 
-2. **Run `/speckit.implement` and continue from T019**
+2. **Run `/speckit.implement` and continue from T031**
 
 3. **Batch Workflow**:
    - Convert files in batch

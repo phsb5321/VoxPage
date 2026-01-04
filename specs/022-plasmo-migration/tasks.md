@@ -103,9 +103,9 @@ current JavaScript implementation on Wikipedia test page with 200 paragraphs.
 - [X] T025 [P] Convert background/providers/browser-provider.js → utils/providers/browser.ts
 - [X] T026 [P] Convert background/providers/groq-timestamp-provider.js → utils/providers/groq-timestamp.ts
 - [X] T027 Create utils/providers/base.ts with ITTSProvider interface and Zod schemas
-- [ ] T028 [P] Convert background/remote-logger.js → utils/logging/logger.ts (RemoteLogger class with Loki HTTP Push API)
-- [ ] T029 [P] Convert background/log-entry.js → utils/logging/entry.ts (LogEntry model with nanosecond timestamps)
-- [ ] T030 [P] Convert background/log-buffer.js → utils/logging/buffer.ts (LogBuffer circular buffer)
+- [X] T028 [P] Convert background/remote-logger.js → utils/logging/logger.ts (RemoteLogger class with Loki HTTP Push API)
+- [X] T029 [P] Convert background/log-entry.js → utils/logging/entry.ts (LogEntry model with nanosecond timestamps)
+- [X] T030 [P] Convert background/log-buffer.js → utils/logging/buffer.ts (LogBuffer circular buffer)
 
 ### Content Module Conversion (Foundational)
 

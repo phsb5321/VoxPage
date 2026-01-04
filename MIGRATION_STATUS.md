@@ -3,17 +3,17 @@
 **Feature**: 022-plasmo-migration
 **Branch**: `022-plasmo-migration`
 **Last Updated**: 2026-01-03
-**Overall Progress**: 10 of 161 tasks complete (6.2%)
+**Overall Progress**: 16 of 161 tasks complete (9.9%)
 
 ## Executive Summary
 
 The VoxPage browser extension is being migrated from vanilla JavaScript + JSDoc to TypeScript + WXT framework. This is a **5-6 week project** with 161 tasks across 8 phases. The foundation is established with WXT configured, TypeScript working, and core modules converted.
 
-**Status**: Phase 1 complete ✅ | Phase 2 in progress 🔄 (22% done)
+**Status**: Phase 1 complete ✅ | Phase 2 in progress 🔄 (35% done)
 
 ---
 
-## Commits Pushed (5 total)
+## Commits Pushed (7 total)
 
 ### Commit 1: `5914c86` - Phase 1 Foundation
 **Date**: 2026-01-03
@@ -94,47 +94,74 @@ Created:
 
 **Key Achievement**: Complete audio infrastructure with Zod schemas and TypeScript types
 
+### Commit 6: `8571fbc` - Provider Infrastructure
+**Date**: 2026-01-03
+**Tasks**: T021 (partial), infrastructure
+
+```
+feat(providers): add pricing model and OpenAI provider TypeScript stubs
+
+Created:
+- utils/providers/pricing.ts - Zod-based pricing model
+- utils/providers/openai.ts - OpenAI provider implementation
+```
+
+**Key Achievement**: Pricing model foundation with Zod validation
+
+### Commit 7: `e81b047` - Complete TTS Providers
+**Date**: 2026-01-03
+**Tasks**: T021-T026 (6 tasks)
+
+```
+feat(providers): complete all 6 TTS provider TypeScript conversions
+
+Created:
+- utils/providers/openai.ts - OpenAI with auto-language detection
+- utils/providers/elevenlabs.ts - ElevenLabs 29+ languages
+- utils/providers/cartesia.ts - Cartesia English voices
+- utils/providers/groq.ts - Groq free-tier TTS
+- utils/providers/browser.ts - Web Speech API
+- utils/providers/groq-timestamp.ts - Whisper word timing
+```
+
+**Key Achievement**: Complete provider ecosystem with type-safe API integrations
+
 ---
 
 ## Phase 2: TypeScript Conversion Status
 
 **Goal**: Convert entire JavaScript + JSDoc codebase to TypeScript with Zod-first types
 **Gate**: `tsc --noEmit` passes + all 153 tests pass
-**Progress**: 10 of 46 tasks (22%)
+**Progress**: 16 of 46 tasks (35%)
 
-### ✅ Completed (10 tasks)
+### ✅ Completed (16 tasks)
 
+**Config Modules**:
 - [X] T013 - Config schema.ts
 - [X] T014 - Config defaults.ts
 - [X] T015 - Config store.ts
 - [X] T016 - Config migrations.ts
 - [X] T017 - Config index.ts
+
+**Audio Modules**:
 - [X] T018 - Audio playback-sync.ts
 - [X] T019 - Audio cache.ts + segment.ts
 - [X] T020 - Audio visualizer.ts
+
+**Provider Modules**:
+- [X] T021 - Provider openai.ts + pricing.ts
+- [X] T022 - Provider elevenlabs.ts
+- [X] T023 - Provider cartesia.ts
+- [X] T024 - Provider groq.ts
+- [X] T025 - Provider browser.ts
+- [X] T026 - Provider groq-timestamp.ts
 - [X] T027 - Provider base.ts
-- [X] T021 (partial) - Provider pricing.ts + openai.ts stub
 
-### 📋 Next Batch: TTS Providers (5 tasks remaining)
+### 📋 Next Batch: Logging Modules (3 tasks)
 
-**Resume Point**: T022 (ElevenLabs provider)
-
-**Completed**:
-- [X] T021 (partial) - pricing.ts + openai.ts created, needs completion
+**Resume Point**: T028 (Remote Logger)
 
 **Remaining**:
-
-- [ ] T021 - openai-provider.js → utils/providers/openai.ts
-- [ ] T022 - elevenlabs-provider.js → utils/providers/elevenlabs.ts
-- [ ] T023 - cartesia-provider.js → utils/providers/cartesia.ts
-- [ ] T024 - groq-provider.js → utils/providers/groq.ts
-- [ ] T025 - browser-provider.js → utils/providers/browser.ts
-- [ ] T026 - groq-timestamp-provider.js → utils/providers/groq-timestamp.ts
-
-**Estimated Time**: 2 hours
-**Commit After**: Batch 2 complete
-
-### 📋 Batch 3: Logging Modules (3 tasks)
 
 - [ ] T028 - remote-logger.js → utils/logging/logger.ts
 - [ ] T029 - log-entry.js → utils/logging/entry.ts
